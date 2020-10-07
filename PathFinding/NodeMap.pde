@@ -82,34 +82,6 @@ class NodeMap extends Matrix {
     end.setFillColor(color (127, 127, 0));
   }
   
-  /** Met a jour les H des cellules
-  doit etre appele apres le changement du noeud
-  de debut ou fin
-  */
-  void updateHs() {
-    for (int j = 0; j < rows; j++) {
-      for (int i = 0; i < cols; i++) {
-        Node current = (Node)cells.get(j).get(i); 
-        current.setH( calculateH(current));
-      }
-    }
-  }
-  
-  // Permet de generer aleatoirement le cout de deplacement
-  // entre chaque cellule
-  void randomizeMovementCost() {
-    for (int j = 0; j < rows; j++) {
-      for (int i = 0; i < cols; i++) {
-        
-        int cost = parseInt(random (0, cols)) + 1;
-        
-        Node current = (Node)cells.get(j).get(i);
-        current.setMovementCost(cost);
-       
-      }
-    }
-  }
-  
   // Permet de generer les voisins de la cellule a la position indiquee
   void generateNeighbours(int i, int j) {
     Node c = (Node)getCell (i, j);
@@ -171,59 +143,78 @@ class NodeMap extends Matrix {
     deux cellules
   */
   void findAStarPath () {
-    // TODO : Complétez ce code
-    
     if (start == null || end == null) {
       println ("No start and no end defined!");
       return;
     }
     
-    // TODO : Complétez ce code
+    ArrayList<Node> openList = new ArrayList<Node>();
+    ArrayList<Node> closedList = new ArrayList<Node>();
     
-    // Appelez generatePath si le chemin est t
-    // TODO : Complétez ce code
+    for (int j = 0; j < rows; j++) {
+      for (int i = 0; i < cols; i++) {
+        Node n = (Node)getCell(i, j);
+        n.setH(Math.abs(end.x - n.x) + Math.abs(end.y - n.y));
+        n.setG(Integer.MAX_VALUE);
+      }
+    }
     
+    start.setG(0);
+    openList.add(start);
+
+    while (openList.size() > 0) {
+      Node active = openList.get(0);
+      for (int i = 1; i < openList.size(); i++) {
+        Node n = openList.get(i);
+        if (n.getF() < active.getF()) {
+          active = n;
+        }
+      }
+
+      if (active == end) {
+        break;
+      }
+
+      openList.remove(active);
+      closedList.add(active);
+      
+      for (Node n : active.neighbours) {
+        if (closedList.contains(n) || !n.isWalkable) {
+          continue;
+        }
+        
+        int gPrime = active.getG() + 8;
+        
+        if (!openList.contains(n)) {
+          openList.add(n);
+        } else if (gPrime > n.getG()) {
+          continue;
+        }
+        
+        n.setParent(active);
+        n.setG(gPrime);
+      }
+    }
+
+    if (end.getParent() == null) {
+      // oups
+      return;
+    }
+    
+    generatePath();
   }
   
   /*
     Permet de générer le chemin une fois trouvée
   */
   void generatePath () {
-    // TODO : Complétez ce code
-  }
-  
-  /**
-  * Cherche et retourne le noeud le moins couteux de la liste ouverte
-  * @return Node le moins couteux de la liste ouverte
-  */
-  private Node getLowestCost(ArrayList<Node> openList) {
-    // TODO : Complétez ce code
-    
-    return null;
-  }
-  
-
-  
- /**
-  * Calcule le coût de déplacement entre deux noeuds
-  * @param nodeA Premier noeud
-  * @param nodeB Second noeud
-  * @return
-  */
-  private int calculateCost(Cell nodeA, Cell nodeB) {
-    // TODO : Complétez ce code
-    
-    return 0;
-  }
-  
-  /**
-  * Calcule l'heuristique entre le noeud donnée et le noeud finale
-  * @param node Noeud que l'on calcule le H
-  * @return la valeur H
-  */
-  private int calculateH(Cell node) {
-    // TODO : Complétez ce code
-    return 0;
+    Node n = end;
+    while (n != null) {
+      if (!n.isStart && !n.isEnd) {
+        n.setFillColor(color(200, 0, 0));
+      }
+      n = n.getParent();
+    }
   }
   
   String toStringFGH() {

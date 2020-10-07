@@ -44,6 +44,10 @@ class Node extends Cell {
     this.H = h;
   }
   
+  void setG(int g) {
+    this.G = g;
+  }
+  
   // Permet d'ajouter des voisins à la liste
   void addNeighbour (Node neighbour) {
    
@@ -57,12 +61,6 @@ class Node extends Cell {
   
   void setMovementCost (int cost) {
     movementCost = cost;
-    
-    
-    if (this.parent != null) {
-      G = movementCost + parent.getF();
-    }
-    
   }
   
   Node getParent () {
@@ -71,9 +69,6 @@ class Node extends Cell {
   
   void setParent (Node parent) {
     this.parent = parent;
-    
-    this.G = this.movementCost + parent.getF();
-    
   }
   
   String toString() {

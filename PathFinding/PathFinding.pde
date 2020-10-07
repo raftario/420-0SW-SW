@@ -43,10 +43,8 @@ void initMap () {
   
   worldMap.setBaseColor(baseColor);
   
-  worldMap.setStartCell(mapCols / 2 - 5, 3);
-  worldMap.setEndCell(mapCols - 1, mapRows - 1);
-  
-  worldMap.updateHs();
+  worldMap.setStartCell((int)random(0, mapCols) - 1, (int)random(0, mapRows) - 1);
+  worldMap.setEndCell((int)random(0, mapCols) - 1, (int)random(0, mapRows) - 1);
   
   worldMap.makeWall (mapCols / 2, 0, 15, true);
   worldMap.makeWall (mapCols / 2 - 9, 10, 10, false);
